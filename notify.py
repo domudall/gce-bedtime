@@ -7,7 +7,7 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 class Notify(object):
     def __init__(self):
         self.active = False
-        if SLACK_WEBHOOK_URL != None:
+        if SLACK_WEBHOOK_URL != None and SLACK_WEBHOOK_URL != "":
             self.active = True
 
     def send(self, instances, action):
