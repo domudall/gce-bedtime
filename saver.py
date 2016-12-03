@@ -1,5 +1,6 @@
 from oauth2client.client import GoogleCredentials
 from googleapiclient import discovery
+from notify import Notify
 
 import json
 import os
@@ -22,6 +23,7 @@ class Saver(object):
     def __init__(self):
         credentials = GoogleCredentials.get_application_default()
         self.compute = discovery.build("compute", "v1", credentials=credentials)
+        self.notify = Notify()
 
     def running_savers(self):
         result = self.compute.instances().list(project=PROJECT_ID, zone=ZONE).execute()
@@ -47,6 +49,7 @@ class Saver(object):
         instances = self.running_savers()
         print("Turning off these instances:")
         print([inst["name"] for inst in instances])
+        self.notify.send(instances, 'shutdown')
         for inst in instances:
             self.instance_off(inst)
 
@@ -54,5 +57,6 @@ class Saver(object):
         instances = self.stopped_savers()
         print("Turning on these instances:")
         print([inst["name"] for inst in instances])
+        self.notify.send(instances, 'turned on')
         for inst in instances:
             self.instance_on(inst)
